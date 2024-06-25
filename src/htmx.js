@@ -3257,7 +3257,7 @@ var htmx = (function() {
    * @param {Element} element
    * @return {boolean}
    */
-  function shouldInclude(element) {
+  function couldInclude(elt) {
     // Cast to trick tsc, undefined values will work fine here
     const elt = /** @type {HTMLInputElement} */ (element)
     if (elt.name === '' || elt.name == null || elt.disabled || closest(elt, 'fieldset[disabled]')) {
@@ -3267,10 +3267,31 @@ var htmx = (function() {
     if (elt.type === 'button' || elt.type === 'submit' || elt.tagName === 'image' || elt.tagName === 'reset' || elt.tagName === 'file') {
       return false
     }
+    return true
+  }
+
+  /**
+   * @param {Element} element
+   * @return {boolean}
+   */
+  function shouldInclude(element) {
+    if (!couldInclude(element) {
+      return false
+    }  
+    // Cast to trick tsc, undefined values will work fine here
+    const elt = /** @type {HTMLInputElement} */ (element)
     if (elt.type === 'checkbox' || elt.type === 'radio') {
       return elt.checked
     }
     return true
+  }
+
+  /**
+   * @param {Element} element
+   * @return {boolean}
+   */
+  function shouldValidate(element) {
+    return couldInclude(element)
   }
 
   /** @param {string} name
@@ -3327,10 +3348,12 @@ var htmx = (function() {
         value = toArray(elt.files)
       }
       addValueToFormData(name, value, formData)
-      if (validate) {
-        validateElement(elt, errors)
-      }
     }
+
+    if (validate && shouldValidate(elt) {
+      validateElement(elt, errors)
+    }
+    
     if (elt instanceof HTMLFormElement) {
       forEach(elt.elements, function(input) {
         if (processed.indexOf(input) >= 0) {
