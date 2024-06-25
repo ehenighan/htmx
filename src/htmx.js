@@ -3257,7 +3257,7 @@ var htmx = (function() {
    * @param {Element} element
    * @return {boolean}
    */
-  function couldInclude(elt) {
+  function couldInclude(element) {
     // Cast to trick tsc, undefined values will work fine here
     const elt = /** @type {HTMLInputElement} */ (element)
     if (elt.name === '' || elt.name == null || elt.disabled || closest(elt, 'fieldset[disabled]')) {
